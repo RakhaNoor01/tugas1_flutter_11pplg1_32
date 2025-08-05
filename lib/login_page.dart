@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'register_page.dart';
 import 'home_page.dart';
+import 'register_page.dart'; // Impor halaman registrasi
 
 class LoginPage extends StatefulWidget {
   final String? initialEmail;
@@ -13,54 +13,60 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  String statusLogin = '';
-
-  // Simpan akun dalam map
-  Map<String, String> akunTersimpan = {
-    'admin@gmail.com': 'admin123',
+  // Simulasi database akun. Dimulai dengan akun admin.
+  static final Map<String, String> _akunTersimpan = {
+    'admin': '123',
   };
 
   @override
   void initState() {
     super.initState();
-
-    // Jika dikirim dari register, isi otomatis dan simpan akun
+    // Jika ada data yang dikirim dari halaman registrasi,
+    // simpan akun baru dan isi form.
     if (widget.initialEmail != null && widget.initialPassword != null) {
-      _emailController.text = widget.initialEmail!;
+      _akunTersimpan[widget.initialEmail!] = widget.initialPassword!;
+      _usernameController.text = widget.initialEmail!;
       _passwordController.text = widget.initialPassword!;
-      akunTersimpan[widget.initialEmail!] = widget.initialPassword!;
-
+      
+      // Tampilkan pesan sukses setelah frame selesai dibangun
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() {
-          statusLogin = 'Berhasil daftar, silakan login';
-        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Registrasi berhasil! Silakan login.'),
+            backgroundColor: Colors.green,
+          ),
+        );
       });
     }
   }
 
   void _handleLogin() {
-    String email = _emailController.text.trim();
+    String username = _usernameController.text.trim();
     String password = _passwordController.text;
 
-    if (akunTersimpan.containsKey(email) && akunTersimpan[email] == password) {
+    // Cek apakah username dan password cocok dengan yang tersimpan
+    if (_akunTersimpan.containsKey(username) && _akunTersimpan[username] == password) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const HomePage()),
       );
     } else {
-      setState(() {
-        statusLogin = 'Login Gagal';
-      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Username atau Password salah!'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.pink[50],
+      backgroundColor: Colors.grey[100],
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -68,34 +74,43 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
-                  "Login Page",
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 20),
+                // --- LOGO DITAMBAHKAN DI SINI ---
                 SizedBox(
                   height: 120,
-                  child: Image.asset('images/logo.png', fit: BoxFit.contain),
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  "Welcome to our First App",
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                  child: Image.asset(
+                    'images/logo.png',
+                    fit: BoxFit.contain,
+                    // Fallback jika gambar tidak ditemukan
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Icon(
+                        Icons.lock_person_sharp,
+                        size: 80,
+                        color: Colors.blueAccent,
+                      );
+                    },
                   ),
                 ),
-                const SizedBox(height: 10),
-                const Text("Please login using your email and password"),
                 const SizedBox(height: 20),
+                Text(
+                  "Selamat Datang",
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[800],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "Silakan login untuk melanjutkan",
+                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                ),
+                const SizedBox(height: 40),
 
                 TextField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
+                  controller: _usernameController,
                   decoration: const InputDecoration(
-                    labelText: 'Email',
-                    border: OutlineInputBorder(),
+                    labelText: 'Username atau Email',
+                    prefixIcon: Icon(Icons.person_outline),
                   ),
                 ),
                 const SizedBox(height: 15),
@@ -105,32 +120,21 @@ class _LoginPageState extends State<LoginPage> {
                   obscureText: true,
                   decoration: const InputDecoration(
                     labelText: 'Password',
-                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.lock_outline),
                   ),
                 ),
-                const SizedBox(height: 25),
+                const SizedBox(height: 30),
 
                 SizedBox(
                   width: double.infinity,
-                  height: 45,
                   child: ElevatedButton(
                     onPressed: _handleLogin,
                     child: const Text("Login"),
                   ),
                 ),
-                const SizedBox(height: 15),
+                const SizedBox(height: 20),
 
-                Text(
-                  statusLogin,
-                  style: TextStyle(
-                    color: statusLogin == 'Login Berhasil' ||
-                            statusLogin == 'Berhasil daftar, silakan login'
-                        ? Colors.green
-                        : Colors.red,
-                  ),
-                ),
-                const SizedBox(height: 25),
-
+                // --- LINK KE HALAMAN REGISTER ---
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -139,12 +143,10 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => const RegisterPage(),
-                          ),
+                          MaterialPageRoute(builder: (_) => const RegisterPage()),
                         );
                       },
-                      child: const Text("Daftar"),
+                      child: const Text("Daftar di sini"),
                     ),
                   ],
                 ),
