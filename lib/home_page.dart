@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'calculator_page.dart';
+import 'pages/calculator_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

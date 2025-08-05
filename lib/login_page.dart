@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'home_page.dart';
-import 'register_page.dart'; // Impor halaman registrasi
+import 'register_page.dart';
+import '../widgets/custom_text_field.dart'; // Impor widget
+import '../widgets/custom_button.dart';    // Impor widget
 
 class LoginPage extends StatefulWidget {
   final String? initialEmail;
@@ -16,7 +18,6 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  // Simulasi database akun. Dimulai dengan akun admin.
   static final Map<String, String> _akunTersimpan = {
     'admin': '123',
   };
@@ -24,14 +25,11 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    // Jika ada data yang dikirim dari halaman registrasi,
-    // simpan akun baru dan isi form.
     if (widget.initialEmail != null && widget.initialPassword != null) {
       _akunTersimpan[widget.initialEmail!] = widget.initialPassword!;
       _usernameController.text = widget.initialEmail!;
       _passwordController.text = widget.initialPassword!;
       
-      // Tampilkan pesan sukses setelah frame selesai dibangun
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -47,7 +45,6 @@ class _LoginPageState extends State<LoginPage> {
     String username = _usernameController.text.trim();
     String password = _passwordController.text;
 
-    // Cek apakah username dan password cocok dengan yang tersimpan
     if (_akunTersimpan.containsKey(username) && _akunTersimpan[username] == password) {
       Navigator.pushReplacement(
         context,
@@ -74,13 +71,11 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // --- LOGO DITAMBAHKAN DI SINI ---
                 SizedBox(
                   height: 120,
                   child: Image.asset(
                     'images/logo.png',
                     fit: BoxFit.contain,
-                    // Fallback jika gambar tidak ditemukan
                     errorBuilder: (context, error, stackTrace) {
                       return const Icon(
                         Icons.lock_person_sharp,
@@ -106,35 +101,29 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 40),
 
-                TextField(
+                // --- MENGGUNAKAN CUSTOM WIDGET ---
+                CustomTextField(
                   controller: _usernameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Username atau Email',
-                    prefixIcon: Icon(Icons.person_outline),
-                  ),
+                  labelText: 'Username atau Email',
+                  prefixIcon: Icons.person_outline,
                 ),
                 const SizedBox(height: 15),
 
-                TextField(
+                CustomTextField(
                   controller: _passwordController,
+                  labelText: 'Password',
+                  prefixIcon: Icons.lock_outline,
                   obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Password',
-                    prefixIcon: Icon(Icons.lock_outline),
-                  ),
                 ),
                 const SizedBox(height: 30),
 
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _handleLogin,
-                    child: const Text("Login"),
-                  ),
+                CustomButton(
+                  text: "Login",
+                  onPressed: _handleLogin,
                 ),
+                
                 const SizedBox(height: 20),
 
-                // --- LINK KE HALAMAN REGISTER ---
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart'; // Untuk navigasi kembali setelah daftar
+import 'login_page.dart';
+import '../widgets/custom_text_field.dart';
+import '../widgets/custom_button.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -13,10 +15,10 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   void _handleRegister() {
-    // Validasi form
     if (_formKey.currentState!.validate()) {
       Navigator.pushAndRemoveUntil(
         context,
@@ -59,13 +61,10 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 30),
 
-                // Input Nama Lengkap
-                TextFormField(
+                CustomTextField(
                   controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nama Lengkap',
-                    prefixIcon: Icon(Icons.badge_outlined),
-                  ),
+                  labelText: 'Nama Lengkap',
+                  prefixIcon: Icons.badge_outlined,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Nama tidak boleh kosong';
@@ -75,14 +74,11 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 15),
 
-                // Input Email
-                TextFormField(
+                CustomTextField(
                   controller: _emailController,
+                  labelText: 'Email',
+                  prefixIcon: Icons.email_outlined,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    prefixIcon: Icon(Icons.email_outlined),
-                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Email tidak boleh kosong';
@@ -95,14 +91,11 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 15),
 
-                // Input Password
-                TextFormField(
+                CustomTextField(
                   controller: _passwordController,
+                  labelText: 'Password',
+                  prefixIcon: Icons.lock_outline,
                   obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Password',
-                    prefixIcon: Icon(Icons.lock_outline),
-                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Password tidak boleh kosong';
@@ -115,14 +108,11 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 15),
 
-                // Konfirmasi Password
-                TextFormField(
+                CustomTextField(
                   controller: _confirmPasswordController,
+                  labelText: 'Konfirmasi Password',
+                  prefixIcon: Icons.lock_clock_outlined,
                   obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Konfirmasi Password',
-                    prefixIcon: Icon(Icons.lock_clock_outlined),
-                  ),
                   validator: (value) {
                     if (value != _passwordController.text) {
                       return 'Password tidak cocok';
@@ -132,14 +122,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 30),
 
-                // Tombol Daftar
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _handleRegister,
-                    child: const Text("Daftar"),
-                  ),
-                ),
+                CustomButton(text: "Daftar", onPressed: _handleRegister),
               ],
             ),
           ),
